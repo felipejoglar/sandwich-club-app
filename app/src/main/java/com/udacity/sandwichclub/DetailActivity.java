@@ -11,6 +11,8 @@ import com.squareup.picasso.Picasso;
 import com.udacity.sandwichclub.model.Sandwich;
 import com.udacity.sandwichclub.utils.JsonUtils;
 
+import java.util.List;
+
 public class DetailActivity extends AppCompatActivity {
 
     public static final String EXTRA_POSITION = "extra_position";
@@ -44,7 +46,7 @@ public class DetailActivity extends AppCompatActivity {
             return;
         }
 
-        populateUI();
+        populateUI(sandwich);
         Picasso.with(this)
                 .load(sandwich.getImage())
                 .into(ingredientsIv);
@@ -57,10 +59,40 @@ public class DetailActivity extends AppCompatActivity {
         Toast.makeText(this, R.string.detail_error_message, Toast.LENGTH_SHORT).show();
     }
 
-    private void populateUI() {
+    private void populateUI(Sandwich sandwich) {
         TextView originTv = findViewById(R.id.origin_tv);
+        originTv.setText(sandwich.getPlaceOfOrigin());
+
         TextView descriptionTv = findViewById(R.id.description_tv);
+        descriptionTv.setText(sandwich.getDescription());
+
         TextView ingredientsTv = findViewById(R.id.ingredients_tv);
+        ingredientsTv.setText(populateList(sandwich.getIngredients(), "· "));
+
         TextView alsoKnownAsTv = findViewById(R.id.also_known_tv);
+        alsoKnownAsTv.setText(populateList(sandwich.getAlsoKnownAs(), ""));
+    }
+
+    private String populateList(List<String> list, String preline) {
+        StringBuilder result = new StringBuilder();
+        boolean firstItem = true;
+        String newLine = "\n";
+
+        if (list.size() == 0) {
+            result.append(getString(R.string.no_info_available));
+        } else {
+            for (String listItem : list) {
+                if (firstItem) {
+                    firstItem = false;
+                    result.append(preline);
+                    result.append(listItem);
+                } else {
+                    result.append(newLine);
+                    result.append(preline);
+                    result.append(listItem);
+                }
+            }
+        }
+        return result.toString();
     }
 }
